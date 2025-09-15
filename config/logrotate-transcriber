@@ -1,0 +1,14 @@
+/opt/transcriber/transcriber.log /opt/transcriber/processed.log {
+  rotate 7
+  daily
+  missingok
+  notifempty
+  compress
+  delaycompress
+  create 0640 transcriber transcriber
+  sharedscripts
+  postrotate
+    systemctl kill -s HUP --kill-who=main transcriber.service 2>/dev/null || true
+  endscript
+}
+

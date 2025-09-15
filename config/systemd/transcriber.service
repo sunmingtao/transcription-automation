@@ -1,0 +1,14 @@
+[Unit]
+Description=Media Transcription Scanner
+After=network.target
+
+[Service]
+Type=oneshot
+User=transcriber
+Group=transcriber
+EnvironmentFile=/opt/transcriber/config/transcriber.env
+ExecStart=/opt/transcriber/scripts/transcriber.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+
