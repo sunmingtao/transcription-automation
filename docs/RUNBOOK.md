@@ -5,15 +5,15 @@ The service watches a project directory for new audio/video files and uses Whisp
 
 ## 1. Overview
 
-##Service## name: `transcriber`
+**Service** name: `transcriber`
 
-##Purpose:##
+**Purpose:**
 
 - Detect new audio/video files in a project folder.
 - Transcribe them to .txt files using Whisper.
 - Maintain state and logs for auditing and troubleshooting.
 
-##Core files and directories## (default paths):
+**Core files and directories** (default paths):
 
 | Item                             | Path                                          |
 | -------------------------------- | --------------------------------------------- |
@@ -159,7 +159,7 @@ If the above steps fail:
 
 2. Contact the maintainer with the above data.
 
-9. References
+## 9. References
   - OpenAI Whisper CLI
   - systemd.timer documentation
   - logrotate manual
