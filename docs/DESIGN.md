@@ -33,3 +33,50 @@ Key features:
 - Scheduling:
 
   - Systemd timer (preferred) or cron job every 10 minutes
+
+### Assumptions
+
+- Input files fit on local disk and are not larger than what Whisper can process in available memory.
+- Files are copied atomically (or at least size-stable after a few seconds).
+- All paths (project directory, log locations) are writable by a dedicated transcriber system user.
+- Bash is the sole orchestration language (requirement from client).
+- Out of Scope (Future Enhancements)
+- Speaker diarization or word-level timestamps
+- Real-time streaming transcription
+- Web interface or API endpoints
+- Cloud/S3 integration or remote storage
+- Windows or macOS deployments
+
+### Out of Scope (Future Enhancements)
+
+- Speaker diarization or word-level timestamps
+- Real-time streaming transcription
+- Web interface or API endpoints
+- Cloud/S3 integration or remote storage
+- Windows or macOS deployments
+
+## 3. System Architecture
+```
+
+           ┌─────────────┐
+           │ User copies │
+           │ media file  │
+           └──────┬──────┘
+                  │
+      ┌───────────▼────────────────┐
+      │ Scheduled job (systemd or  │
+      │ cron) every 10 minutes     │
+      └──────┬─────────────────────┘
+             │
+    ┌────────▼─────────┐
+    │ transcriber.sh   │
+    └────────┬─────────┘
+             │
+ ┌───────────┴──────────────────────────┐
+ │ 1. Detect new stable files            │
+ │ 2. Mark "in progress" in TSV          │
+ │ 3. Run whisper → transcripts/         │
+ │ 4. Update TSV to "complete" or "error"│
+ │ 5. Append outcome to processed.log    │
+ └───────────────────────────────────────┘
+```
