@@ -1,6 +1,6 @@
 # Transcription Automation – Design Document
 
-1. Overview
+## 1. Overview
 
 This project provides an automated, fault-tolerant pipeline for transcribing audio and video files using the OpenAI Whisper CLI tool.
 Users simply copy supported audio/video files into a designated project folder. Every 10 minutes a scheduled job (systemd timer or cron) scans the folder, transcribes new files, and records the outcome.
@@ -12,9 +12,9 @@ Key features:
 - Robust logging for operations and audits
 - Designed to run 24/7 on Linux servers with minimal maintenance
 
-2. Scope & Assumptions
+## 2. Scope & Assumptions
 
-## In-Scope
+### In-Scope
 
 - Environment:
 
