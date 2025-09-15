@@ -80,3 +80,95 @@ Key features:
  │ 5. Append outcome to processed.log    │
  └───────────────────────────────────────┘
 ```
+
+#### Core components
+
+- `transcriber.sh`: orchestrates scanning, locking, state updates, and Whisper calls.
+- `transcriptions.tsv`: authoritative state file, one row per media file.
+- `processed.log`: chronological processing log with timestamps and exit codes.
+- `transcripts/`: output directory for Whisper .txt files.
+
+## 4. Workflow & Data Flow
+
+### File discovery
+
+- find searches for files matching allowed extensions (e.g. mp3, wav, m4a, mp4, mkv).
+- Skips files already marked in progress or complete.
+- Checks file size twice with a delay to ensure copying is finished.
+
+### Processing
+
+- Once a file passes stability checks:
+  - Status in transcriptions.tsv set to in progress.
+  - Whisper command executed:
+  `whisper "$AUDIO_FILE" --model base --output_dir transcripts --output_format txt`
+  - Exit code and output path captured.
+  
+### Completion
+
+- On success: status updated to complete with transcript path and exit code 0.
+- On failure: status updated to error with exit code.
+
+## 5. Error Handling & Recovery
+
+- Locking:
+  - Global lock file /tmp/transcriber_cron.lock to prevent overlapping runs.
+
+- Idempotency:
+  - Re-running the job doesn’t reprocess files with status complete or in progress.
+
+- Crash Safety:
+  - Atomic updates of transcriptions.tsv (write to temp file and mv).
+
+- Retries:
+  - Failed files stay in error until manually retried or cleaned.
+  
+## 6. Security & Permissions
+
+- Runs as a dedicated non-root user transcriber.
+- Project directory and logs owned by transcriber with 750 permissions.
+- No network exposure; Whisper runs locally.
+- Log files rotated daily to prevent growth and protect sensitive transcripts.
+
+## 7. Deployment & Operations
+  
+### Installation
+
+- install.sh script:
+
+  - Creates transcriber user and required directories
+  - Installs systemd service and timer
+  - Installs logrotate config
+  - Reloads systemd and starts timer
+  
+### Monitoring
+
+- Logs available at:
+  - `/opt/transcriber/transcriber.log` (per-run messages)
+  - `/opt/transcriber/processed.log` (per-file status)
+
+- Check status:
+  ```
+  systemctl status transcriber.timer
+  journalctl -u transcriber.service
+  ```
+  
+### Backups & Retention
+
+- Back up `transcriptions.tsv` and `transcripts/` as needed.
+- Logrotate keeps 7 daily rotations, compressed. 
+
+## 8. Future Enhancements
+
+- Notifications on completion/failure (email, Slack).
+- Alternative output formats: SRT/VTT, JSON.
+- Parallel processing of large backlogs.
+- Integration with cloud storage (S3/GCS/Azure).
+- GPU-accelerated Whisper variants.
+
+## 9. References
+
+- OpenAI Whisper
+- Systemd Timers
+- GNU Coreutils 
+
