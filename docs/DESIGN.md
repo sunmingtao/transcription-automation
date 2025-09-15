@@ -172,3 +172,7 @@ Key features:
 - Systemd Timers
 - GNU Coreutils 
 
+| Date       | Version | Author      | Notes         |
+| ---------- | ------- | ----------- | ------------- |
+| 2025-09-15 | 0.1     | Mingtao Sun | Initial draft |
+
